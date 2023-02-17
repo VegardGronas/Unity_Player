@@ -10,6 +10,8 @@ public class P_PlayerMove : MonoBehaviour
     private Rigidbody _rigid;
     public Vector3 Velocity { get; private set; }
 
+    private Transform _mainTransform = null;
+
     private void OnEnable()
     {
         P_PlayerMain.playerJump += OnPlayerJump;
@@ -26,6 +28,7 @@ public class P_PlayerMove : MonoBehaviour
 
     private void Start()
     {
+        if(!_mainTransform) _mainTransform= transform;  
         _rigid = GetComponent<Rigidbody>();
     }
 
@@ -47,10 +50,15 @@ public class P_PlayerMove : MonoBehaviour
     private void FixedUpdate()
     {
         if (isPaused) return;
-        Vector3 forward = transform.forward * Velocity.z;
-        Vector3 right = transform.right * Velocity.x;
+        Vector3 forward = _mainTransform.forward * Velocity.z;
+        Vector3 right = _mainTransform.right * Velocity.x;
         Vector3 final = forward + right;
 
         _rigid.AddForce(final, ForceMode.Impulse);
+    }
+
+    public void ChangeTransformForMove(Transform newTransform)
+    {
+        _mainTransform = newTransform;
     }
 }
