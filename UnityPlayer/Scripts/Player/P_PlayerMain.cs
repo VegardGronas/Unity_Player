@@ -6,13 +6,21 @@ using UnityEngine.InputSystem;
 
 public class P_PlayerMain : MonoBehaviour
 {
-    private Vector2 _mouseDelta;
-    private Vector2 _moveDirection;
+    [SerializeField] private GameObject ui_InGameOverlay;
+    [SerializeField] private GameObject ui_InGamePauseMenu;
 
     public static event Action<Vector2> mouseDelta;
     public static event Action<Vector2> moveDirection;
 
     public static event Action<bool> mouseLeftClick;
+    public static event Action<bool> playerPause;
+    public static event Action<bool> playerJump;
+
+    private void Start()
+    {
+        ui_InGamePauseMenu.SetActive(false);
+        ui_InGameOverlay.SetActive(true);
+    }
 
     //INPUT
     public void ActionMove(InputAction.CallbackContext context)
@@ -45,5 +53,28 @@ public class P_PlayerMain : MonoBehaviour
         {
             mouseLeftClick?.Invoke(false);
         }
+    }
+
+    public void ActionPause(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            UpdateUIElemts();
+            playerPause?.Invoke(ui_InGamePauseMenu.activeInHierarchy);
+        }
+    }
+
+    public void ActionJump(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            playerJump?.Invoke(true);
+        }
+    }
+
+    private void UpdateUIElemts()
+    {
+        ui_InGamePauseMenu.SetActive(!ui_InGamePauseMenu.activeInHierarchy);
+        ui_InGameOverlay.SetActive(!ui_InGamePauseMenu.activeInHierarchy);
     }
 }
